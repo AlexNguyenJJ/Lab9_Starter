@@ -69,25 +69,48 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button onclick="consoleLog()">Console Log</button>
+      <button onclick="consoleError()">Console Error</button>
+      <button onclick="consoleCount()">Console Count</button>
+      <button onclick="consoleWarn()">Console Warn</button>
+      <button onclick="consoleAssert()">Console Assert</button>
+      <button onclick="consoleClear()">Console Clear</button>
+      <button onclick="consoleDir()">Console Dir</button>
+      <button onclick="consoleDirxml()">Console dirxml</button>
+      <button onclick="consoleGroupStart()">Console Group Start</button>
+      <button onclick="consoleGroupEnd()">Console Group End</button>
+      <button onclick="consoleTable()">Console Table</button>
+      <button onclick="consoleTime()">Start Timer</button>
+      <button onclick="consoleTimeEnd()">End Timer</button>
+      <button onclick="consoleTrace()">Console Trace</button>
+      <button onclick="globalError()">Trigger a Global Error</button>
     </section>
   </main>
 
+  
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "34f38d06548a4b429bed8575bd180e6a"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+                        
+  <script>
+    TrackJS.track('Testing TrackJS!');
+                        
+
+    class InvalidSecondArgumentError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "InvalidSecondArgumentError";
+      }
+    }
+
+    window.onerror = function(msg) {
+      console.log("Sadly an error occurred")
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +118,102 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try {
+        if (typeof `${firstNum}` !== "number" ) {
+          throw new Error("The first number is not a number!")
+        }
+        if (typeof `${secondNum}` !== "number" ) {
+          throw new InvalidSecondArgumentError("The second number is not a number!")
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      }
+      catch (err){
+        output.innerHTML = "NaN"
+      } finally {
+        console.log('I want to pass this class with an A!')
+      }
     });
+
+      function globalError() {
+        // console.log("Sadly an error occurred");
+        boom();
+      }
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    function consoleLog() {
+      console.log("Console Log Demo")
+    }
+
+    function consoleError() {
+      console.error('Console Error Demo');
+    }
+
+    function consoleCount() {
+      console.count('Count Button');
+    }
+
+    function consoleWarn() {
+      console.warn('Console Warn Button');
+    }
+
+    function consoleAssert() {
+      let number = 2;
+      let errorMsg = "The number does not equal 3"
+      console.assert(number == 3, {number, errorMsg} )
+    }
+
+    function consoleClear() {
+      console.clear();
+    }
+
+    function consoleDir() {
+      console.dir(document.querySelector('#error-btns button'));
+    }
+    
+    function consoleDirxml() {
+      console.dirxml(document.querySelector('#error-btns button'))
+    }
+
+    function consoleGroupStart() {
+      console.group("console.group");
+    }
+
+    function consoleGroupEnd() {
+      console.groupEnd("console.group");
+    }
+
+    function consoleTable() {
+      console.table([
+  {
+    name: 'Software Engineering',
+    num: '130',
+  },
+  {
+    name: 'Programming Language',
+    num: '130',
+  },
+  {
+    name: 'Advanced Software',
+    num: '132',
+  }
+]);
+    }
+
+    function consoleTime() {
+      console.time('Timer Button')
+    }
+    function consoleTimeEnd() {
+      console.timeEnd('Timer Button')
+    }
+    function consoleTrace() {
+      const deep = () => { deeper(); };
+      const deeper = () => { deepest(); };
+      const deepest = () => { console.trace(); };
+      deep();
+    }
   </script>
 </body>
 
