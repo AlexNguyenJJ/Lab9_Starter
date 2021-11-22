@@ -97,6 +97,9 @@
   </script>
                         
   <script>
+    window.onerror = function(msg) {
+      console.log("Sadly an error occurred")
+    }
     TrackJS.track('Testing TrackJS!');
                         
 
@@ -107,9 +110,7 @@
       }
     }
 
-    window.onerror = function(msg) {
-      console.log("Sadly an error occurred")
-    }
+    
 
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
